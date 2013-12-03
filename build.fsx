@@ -10,9 +10,14 @@ open System.Xml
 
 // params from teamcity
 let buildNumber          = getBuildParamOrDefault "buildNumber" "0"
+let version              = "0.0.1"
 let assemblyInfoVersion  = if isLocalBuild
                            then "0.0.1-local0"
-                           else getBuildParamOrDefault "branch" "0.0.1-local0"
+                           else
+                              let branch = getBuildParamOrDefault "branch" "local"
+                              if (branch = "master")
+                              then version + "-pre" + buildNumber.PadLeft(3, '0')
+                              else version + "-" + branch + buildNumber.PadLeft(3, '0')
 let assemblyVersion      = if (assemblyInfoVersion.Contains("-"))
                            then assemblyInfoVersion.Substring(0, assemblyInfoVersion.IndexOf('-'))
                                 + "." + buildNumber
@@ -40,10 +45,10 @@ Target "Update AssemblyInfo" (fun _ ->
   |> Seq.iter (fun fileName ->
       ReplaceAssemblyInfoVersions (fun p ->
         { p with
-            AssemblyVersion = assemblyVersion;
-            AssemblyFileVersion = assemblyVersion;
-            AssemblyInformationalVersion = assemblyInfoVersion;
-            AssemblyConfiguration = "Release";
+            AssemblyVersion = assemblyVersion
+            AssemblyFileVersion = assemblyVersion
+            AssemblyInformationalVersion = assemblyInfoVersion
+            AssemblyConfiguration = "Release"
             OutputFileName = fileName })
     )
 )

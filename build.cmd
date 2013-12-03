@@ -6,10 +6,6 @@ cls
 :Build
 cls
 
-if not exist tools\FSharp.Formatting\lib\net40\FSharp.CodeFormat.dll (
-	"tools\nuget\nuget.exe" "install" "FSharp.Formatting" "-OutputDirectory" "tools" "-ExcludeVersion"
-)
-
 SET TARGET="Default"
 
 IF NOT [%1]==[] (set TARGET="%1")
