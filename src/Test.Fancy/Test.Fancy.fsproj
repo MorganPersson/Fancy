@@ -61,7 +61,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
     <Reference Include="Unquote">
-      <HintPath>..\..\..\Nancy.Fsharp\packages\Unquote.2.2.1\lib\net40\Unquote.dll</HintPath>
+      <HintPath>..\..\packages\Unquote.2.2.1\lib\net40\Unquote.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="xunit">

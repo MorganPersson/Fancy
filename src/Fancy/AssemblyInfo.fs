@@ -10,7 +10,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyCopyright("Copyright (C) Morgan Persson")>]
 [<assembly: AssemblyVersion("0.0.1.0")>]
 [<assembly: AssemblyFileVersion("0.0.1.0")>]
-[<assembly: AssemblyInformationalVersion("0.0.1-local000")>]
+[<assembly: AssemblyInformationalVersion("0.0.1-local0")>]
 
 [<assembly: Guid("3C8F8DE9-4DD7-46F4-BC0D-25BD9FDA6BE2")>]
 ()
