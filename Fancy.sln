@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Fancy", "src\Fancy\Fancy.fsproj", "{F86B47EE-8E04-4880-8779-5A327076B768}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Test.Fancy", "src\Test.Fancy\Test.Fancy.fsproj", "{753C970D-D44D-435E-BDD3-FD15FC01C8A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F86B47EE-8E04-4880-8779-5A327076B768}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F86B47EE-8E04-4880-8779-5A327076B768}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F86B47EE-8E04-4880-8779-5A327076B768}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F86B47EE-8E04-4880-8779-5A327076B768}.Release|Any CPU.Build.0 = Release|Any CPU
+		{753C970D-D44D-435E-BDD3-FD15FC01C8A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{753C970D-D44D-435E-BDD3-FD15FC01C8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{753C970D-D44D-435E-BDD3-FD15FC01C8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{753C970D-D44D-435E-BDD3-FD15FC01C8A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
