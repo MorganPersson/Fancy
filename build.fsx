@@ -8,29 +8,26 @@ open System.Globalization
 open System.IO
 open System.Xml
 
-// params from teamcity
-let buildNumber          = getBuildParamOrDefault "buildNumber" "0"
-let version              = "0.0.1"
-let assemblyInfoVersion  = if isLocalBuild
-                           then "0.0.1-local0"
-                           else
-                              let branch = getBuildParamOrDefault "branch" "local"
-                              if (branch = "master")
-                              then version + "-pre" + buildNumber.PadLeft(3, '0')
-                              else version + "-" + branch + buildNumber.PadLeft(3, '0')
-let assemblyVersion      = if (assemblyInfoVersion.Contains("-"))
-                           then assemblyInfoVersion.Substring(0, assemblyInfoVersion.IndexOf('-'))
-                                + "." + buildNumber
-                           else assemblyInfoVersion + ".0"
-let rootDir              = "./" |> FullName
-let sourceDir            = "./src" |> FullName
-let packagesDir          = "./packages" |> FullName
-let toolsDir             = "./tools" |> FullName
-let buildDir             = "./build" |> FullName
-let testDir              = buildDir + "/tests" |> FullName
-let nugetDir             = buildDir + "/nuget" |> FullName
-let nugetExe             = toolsDir + "/nuget/NuGet.exe" |> FullName
-let nugetAccessKey       = getBuildParamOrDefault "nugetAccessKey" "NotSet"
+// params from build server / cmd line
+
+let buildNumber           = getBuildParamOrDefault "buildNumber" "0"
+let version               = "0.1."
+let releaseBuild          = (getBuildParamOrDefault "release" "build") = "release"
+let assemblyVersion       = if releaseBuild
+                            then version + "0"
+                            else version + buildNumber
+let assemblyInfoVersion   = if releaseBuild
+                            then assemblyVersion
+                            else assemblyVersion + "-alpha"
+let rootDir               = "./" |> FullName
+let sourceDir             = "./src" |> FullName
+let packagesDir           = "./packages" |> FullName
+let toolsDir              = "./tools" |> FullName
+let buildDir              = "./build" |> FullName
+let testDir               = buildDir + "/tests" |> FullName
+let nugetDir              = buildDir + "/nuget" |> FullName
+let nugetExe              = toolsDir + "/nuget/NuGet.exe" |> FullName
+let nugetAccessKey        = getBuildParamOrDefault "nugetAccessKey" "NotSet"
 
 Target "Clean" (fun _ ->
   CleanDirs [buildDir; testDir; nugetDir])
