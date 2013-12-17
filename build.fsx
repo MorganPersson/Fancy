@@ -112,10 +112,29 @@ Target "Create nuget package" (fun _ ->
           Version = assemblyInfoVersion
           OutputPath = nugetDir
           WorkingDir = nugetDir
-          Dependencies = ["Nancy", "0.21.1"]
+          Dependencies = ["Nancy", "[0.21.1]"]
           AccessKey = nugetAccessKey
           Publish = hasBuildParam "nugetAccessKey" })
       "fancy.nuspec"
+)
+
+Target "Create nuget sample" (fun _ ->
+  let dir = nugetDir + "/sample/Content"
+  CleanDir dir
+  CopyFiles dir (!! (sourceDir + "/nugetSample/*.*"))
+  NuGet (fun p ->
+      {p with
+          Authors = ["Morgan Persson"]
+          Project = "Fancy.Sample"
+          Description = "This package contains code demonstrating the use of Fancy."
+          Summary = "Fancy - less noise when using Nancy."
+          Version = assemblyInfoVersion
+          OutputPath = nugetDir
+          WorkingDir = sprintf "%s/sample" nugetDir
+          Dependencies = ["Fancy", sprintf "[%s]" assemblyInfoVersion; "Nancy.Hosting.Self", "[0.21.1]"]
+          AccessKey = nugetAccessKey
+          Publish = hasBuildParam "nugetAccessKey" })
+      "fancy.sample.nuspec"
 )
 
 Target "Default" (fun _ -> () )
@@ -130,6 +149,7 @@ Target "Default" (fun _ -> () )
   ==> "Compile tests"
   ==> "Run tests"
   ==> "Create nuget package"
+  ==> "Create nuget sample"
   ==> "Default"
 
 // Start build
