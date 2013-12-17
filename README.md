@@ -3,7 +3,7 @@ Fancy
 Wrist friendly F# for Nancy.
 
 Install
->Install-Package Fancy -Pre
+>Install-Package Fancy
 
 Defining routes
 =======
