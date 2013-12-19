@@ -31,8 +31,8 @@ let nugetAccessKey        = getBuildParamOrDefault "nugetAccessKey" "NotSet"
 
 Target "Clean" (fun _ ->
   CleanDir buildDir
-  CleanDir testDir
-  CleanDir nugetDir
+  CreateDir testDir
+  CreateDir nugetDir
 )
 
 Target "Set version for Teamcity" (fun _ ->
