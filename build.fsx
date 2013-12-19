@@ -11,8 +11,8 @@ open System.Xml
 // params from build server / cmd line
 
 let buildNumber           = getBuildParamOrDefault "buildNumber" "0"
-let version               = "0.1."
 let releaseBuild          = (getBuildParamOrDefault "release" "build") = "release"
+let version               = "0.2.0."
 let assemblyVersion       = if releaseBuild
                             then version + "0"
                             else version + buildNumber
@@ -30,7 +30,10 @@ let nugetExe              = toolsDir + "/nuget/NuGet.exe" |> FullName
 let nugetAccessKey        = getBuildParamOrDefault "nugetAccessKey" "NotSet"
 
 Target "Clean" (fun _ ->
-  CleanDirs [buildDir; testDir; nugetDir])
+  CleanDir buildDir
+  CleanDir testDir
+  CleanDir nugetDir
+)
 
 Target "Set version for Teamcity" (fun _ ->
   trace (sprintf "==> buildNumber %s" assemblyInfoVersion)
