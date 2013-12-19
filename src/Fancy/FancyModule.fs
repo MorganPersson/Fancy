@@ -4,10 +4,13 @@ open System.Collections.Generic
 open Nancy
 open Nancy.Routing
 
+let private nullString:string = null
+
 let (?>) (target : obj) targetKey =
     let t = target :?> DynamicDictionary
-    t.[targetKey].ToString()
- 
+    let x = t.[targetKey] :?> DynamicDictionaryValue
+    if x.HasValue then x.Value.ToString() else nullString
+
 type FancyRoute = { HttpMethod:string; Path:string; Action:obj->INancyModule->obj } 
 
 let private registeredRoutes = List<FancyRoute>()
@@ -75,12 +78,14 @@ let private getParameters (theMethod:Reflection.MethodInfo) =
 let private createStronglyTypedRoute httpMethod path (f:INancyModule->'T) =
     let theMethod = getMethod f
     let parameters = getParameters theMethod
-    let ff = fun p (h:INancyModule) -> 
-        let paramValues = parameters |> List.map(fun pp -> p ?> (fst pp), snd pp)
-        let paramVals = 
-            (h :> obj) 
-            :: (paramValues |> List.map(fun pp -> Convert.ChangeType(fst pp, snd pp)))
-            |> Array.ofList
+    let getValue (dic:DynamicDictionary) (key:string, typ:Type) =
+        let dv = (dic.[key] :?> DynamicDictionaryValue).Value
+        Convert.ChangeType(dv, typ)
+
+    let ff = fun (p:obj) (h:INancyModule) ->
+        let dic = p :?> DynamicDictionary
+        let paramValues = parameters |> List.map(fun pp -> getValue dic pp)
+        let paramVals = (h :> obj) :: paramValues |> Array.ofList
         theMethod.Invoke(f, paramVals)
     createRoute httpMethod path ff
 
