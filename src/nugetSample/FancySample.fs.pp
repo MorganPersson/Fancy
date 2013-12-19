@@ -5,11 +5,10 @@ open Fancy
 open Nancy
 open Nancy.Hosting.Self
 
-GET "/" (fun _ _ -> "Hello Nancy! </p><a href='fancy/42'>Fancy</a>")
+get "/" (fun _ -> "Hello Nancy! </p><a href='fancy/42'>Fancy</a>")
 
-GET "/fancy/{id}" (fun p http ->
-    let id = p ?> "id"
-    let str = sprintf "You sent id=%s at %A" id (DateTime.Now)
+get "/fancy/{id}" (fun http id ->
+    let str = sprintf "You sent id=%i at %A" id (DateTime.Now)
     http.Response
         .AsJson(str)
 )
