@@ -8,7 +8,7 @@ let (?>) (target : obj) targetKey =
     let t = target :?> DynamicDictionary
     t.[targetKey].ToString()
  
-type FancyRoute = { Method:string; Path:string; Action:obj->INancyModule->obj } 
+type FancyRoute = { HttpMethod:string; Path:string; Action:obj->INancyModule->obj } 
 
 let private registeredRoutes = List<FancyRoute>()
 
@@ -29,7 +29,7 @@ type FancyModule () as this =
 
     let addRoute (route:FancyRoute) nancyMod =
         let ff:obj->obj = fun x -> route.Action x nancyMod
-        let route = Route.FromSync(route.Method, route.Path, null, fun x -> ff x |> box)
+        let route = Route.FromSync(route.HttpMethod, route.Path, null, fun x -> ff x |> box)
         routes.Add route
 
     do
@@ -51,14 +51,55 @@ type FancyModule () as this =
         member t.Routes with get () = routes :> IEnumerable<Route>
 
 
-let private createRoute m p f =
+let private createRoute httpMethod p f =
     let ff = fun a b -> (f a b) :> obj
-    let r = { Method = m; Path = p; Action = ff }
+    let r = { HttpMethod = httpMethod; Path = p; Action = ff }
     registeredRoutes.Add r
 
+let private getMethod f =
+    let typ = f.GetType()
+    let all = typ.GetMethods()
+    let theMethod = all |> Array.find(fun m ->
+        let p = m.GetParameters() 
+        p.Length > 0 && p.[0].ParameterType = typedefof<INancyModule>)
+    theMethod
+
+let private getParameters (theMethod:Reflection.MethodInfo) =
+    let parameters = 
+        theMethod.GetParameters()
+        |> Seq.skip 1
+        |> Seq.map(fun p -> p.Name, p.ParameterType)
+        |> List.ofSeq
+    parameters
+
+let private createStronglyTypedRoute httpMethod path (f:INancyModule->'T) =
+    let theMethod = getMethod f
+    let parameters = getParameters theMethod
+    let ff = fun p (h:INancyModule) -> 
+        let paramValues = parameters |> List.map(fun pp -> p ?> (fst pp), snd pp)
+        let paramVals = 
+            (h :> obj) 
+            :: (paramValues |> List.map(fun pp -> Convert.ChangeType(fst pp, snd pp)))
+            |> Array.ofList
+        theMethod.Invoke(f, paramVals)
+    createRoute httpMethod path ff
+
+[<Obsolete("use the strongly typed get'")>]
 let GET path f = createRoute "GET" path f
+[<Obsolete("use the strongly typed post'")>]
 let POST path f = createRoute "POST" path f
+[<Obsolete("use the strongly typed put'")>]
 let PUT path f = createRoute "PUT" path f
+[<Obsolete("use the strongly typed delete'")>]
 let DELETE path f = createRoute "DELETE" path f
+[<Obsolete("use the strongly typed patch'")>]
 let PATCH path f = createRoute "PATCH" path f
+[<Obsolete("use the strongly typed options'")>]
 let OPTIONS path f = createRoute "OPTIONS" path f
+
+let get path f = createStronglyTypedRoute "GET" path f
+let post path f = createStronglyTypedRoute "POST" path f
+let put path f = createStronglyTypedRoute "PUT" path f
+let delete path f = createStronglyTypedRoute "DELETE" path f
+let patch path f = createStronglyTypedRoute "PATCH" path f
+let options path f = createStronglyTypedRoute "OPTIONS" path f
