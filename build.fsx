@@ -12,10 +12,10 @@ open System.Xml
 
 let buildNumber           = getBuildParamOrDefault "buildNumber" "0"
 let releaseBuild          = (getBuildParamOrDefault "release" "build") = "release"
-let version               = "0.2.0."
+let version               = "0.2.0"
 let assemblyVersion       = if releaseBuild
-                            then version + "0"
-                            else version + buildNumber
+                            then version + ".0"
+                            else version + "." + buildNumber
 let assemblyInfoVersion   = if releaseBuild
                             then assemblyVersion
                             else assemblyVersion + "-alpha"
@@ -134,7 +134,7 @@ Target "Create nuget sample" (fun _ ->
           Version = assemblyInfoVersion
           OutputPath = nugetDir
           WorkingDir = sprintf "%s/sample" nugetDir
-          Dependencies = ["Fancy", sprintf "[%s]" assemblyInfoVersion; "Nancy.Hosting.Self", "[0.21.1]"]
+          Dependencies = ["Fancy", sprintf "(,%s]" assemblyInfoVersion; "Nancy.Hosting.Self", "[0.21.1]"]
           AccessKey = nugetAccessKey
           Publish = hasBuildParam "nugetAccessKey" })
       "fancy.sample.nuspec"
