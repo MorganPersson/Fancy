@@ -8,15 +8,16 @@ Install
 Defining routes
 =======
 ```f#
-GET "/" (fun _ _ -> "Hello world!")
+get "/" (fun _ -> "Hello world!")
 
-GET "/greet/{name}" (fun p http ->
-  let name = p ?> "name"
-  let t = name, DateTime.Now
+get "/greet/{name}" (fun http name ->
+  let t = sprintf "At %s: Hello %s" (DateTime.Now) name
   http.Response
       .AsJson t
 )
 ```
+the first parameter to the `get` function is a [Nancy route](https://github.com/NancyFx/Nancy/wiki/Defining-routes)
+The second parameter is an anonymous function. The anonymous function should take at least one parameter where the  first parameter is always a INancyModule. The types of the parameters following the first will be inferred by the F# compiler. In the example above `name` will be inferred to a string.
 
 Contribute
 =======
