@@ -8,11 +8,36 @@ open System.Globalization
 open System.IO
 open System.Xml
 
+let MajorVersion          = Version("0.2.1")
 // params from build server / cmd line
-
 let buildNumber           = getBuildParamOrDefault "buildNumber" "0"
 let releaseBuild          = (getBuildParamOrDefault "release" "build") = "release"
-let version               = "0.2.0"
+let nugetAccessKey        = getBuildParamOrDefault "nugetAccessKey" "NotSet"
+
+
+let getNextVersion () =
+  let buildTypeId = "Fancy_FancyRelease"
+  let xml = REST.ExecuteGetCommand "" ""
+              (sprintf "http://localhost:88/guestAuth/app/rest/buildTypes/id:%s/builds?status=SUCCESS&count=1" buildTypeId)
+  let doc = XmlDocument()
+  doc.LoadXml xml
+  let latestReleasedVersion =
+    Version(
+      match doc.SelectSingleNode("/builds/build") with
+      | null -> sprintf "%i.%i.%i" MajorVersion.Major MajorVersion.Minor MajorVersion.Build
+      | x -> x.Attributes.["number"].Value.Split('-').[0]
+    )
+  let version =
+    let ver = latestReleasedVersion
+    match MajorVersion > latestReleasedVersion, releaseBuild with
+    | false, false  -> sprintf "%i.%i.%i" ver.Major ver.Minor ver.Build
+    | false, true   -> sprintf "%i.%i.%i" MajorVersion.Major (ver.Minor + 1)  0
+    | true, _       -> sprintf "%i.%i.%i" MajorVersion.Major MajorVersion.Minor MajorVersion.Build
+  trace (sprintf "==> Assembly version %s" version)
+  version
+
+
+let version               = getNextVersion()
 let assemblyVersion       = if releaseBuild
                             then version + ".0"
                             else version + "." + buildNumber
@@ -27,7 +52,6 @@ let buildDir              = "./build" |> FullName
 let testDir               = buildDir + "/tests" |> FullName
 let nugetDir              = buildDir + "/nuget" |> FullName
 let nugetExe              = toolsDir + "/nuget/NuGet.exe" |> FullName
-let nugetAccessKey        = getBuildParamOrDefault "nugetAccessKey" "NotSet"
 
 Target "Clean" (fun _ ->
   CleanDir buildDir
@@ -35,8 +59,10 @@ Target "Clean" (fun _ ->
   CreateDir nugetDir
 )
 
+
+
 Target "Set version for Teamcity" (fun _ ->
-  trace (sprintf "==> buildNumber %s" assemblyInfoVersion)
+  trace (sprintf "==> Build bersion %s" assemblyInfoVersion)
   SetBuildNumber (assemblyInfoVersion)
 )
 
