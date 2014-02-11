@@ -6,7 +6,16 @@ Install
 >Install-Package Fancy
 
 Defining routes
-=======
+====
+there are 6 methods defining the http methods (or verbs) `get`, `post`, `put`, `delete`, `patch` and `options`
+They all share the same definition, `string->f:(INancyModule->'a)->unit`
+
+the first parameter is a string, it's a [Nancy route](https://github.com/NancyFx/Nancy/wiki/Defining-routes).
+the second parameter is a function which take a parameter of type INancyModule and a generic parameter `'a`.
+And finally it returns unit.
+
+Examples
+===
 ```f#
 get "/" (fun _ -> "Hello world!")
 
@@ -15,9 +24,9 @@ get "/greet/{name}" (fun http name ->
   http.Response
       .AsJson t
 )
+
+get "/many/{x}/{y}/{z}" (fun (x:string) (y:int) (z:string) -> () )
 ```
-the first parameter to the `get` function is a [Nancy route](https://github.com/NancyFx/Nancy/wiki/Defining-routes)
-The second parameter is an anonymous function. The anonymous function should take at least one parameter where the  first parameter is always a INancyModule. The types of the parameters following the first will be inferred by the F# compiler. In the example above `name` will be inferred to a string.
 
 Contribute
 =======
