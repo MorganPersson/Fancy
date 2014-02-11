@@ -8,7 +8,7 @@ open System.Globalization
 open System.IO
 open System.Xml
 
-let MajorVersion          = Version("0.2.1")
+let MajorVersion          = Version("0.3.0")
 // params from build server / cmd line
 let buildNumber           = getBuildParamOrDefault "buildNumber" "0"
 let releaseBuild          = (getBuildParamOrDefault "release" "build") = "release"
@@ -37,6 +37,7 @@ let getNextVersion () =
   version
 
 
+let nancyVersionRange     = "[0.21.1,0.23.0)"
 let version               = getNextVersion()
 let assemblyVersion       = if releaseBuild
                             then version + ".0"
@@ -58,8 +59,6 @@ Target "Clean" (fun _ ->
   CreateDir testDir
   CreateDir nugetDir
 )
-
-
 
 Target "Set version for Teamcity" (fun _ ->
   trace (sprintf "==> Build bersion %s" assemblyInfoVersion)
@@ -141,7 +140,7 @@ Target "Create nuget package" (fun _ ->
           Version = assemblyInfoVersion
           OutputPath = nugetDir
           WorkingDir = nugetDir
-          Dependencies = ["Nancy", "[0.21.1]"]
+          Dependencies = ["Nancy", nancyVersionRange]
           AccessKey = nugetAccessKey
           Publish = hasBuildParam "nugetAccessKey" })
       "fancy.nuspec"
@@ -160,7 +159,7 @@ Target "Create nuget sample" (fun _ ->
           Version = assemblyInfoVersion
           OutputPath = nugetDir
           WorkingDir = sprintf "%s/sample" nugetDir
-          Dependencies = ["Fancy", sprintf "(,%s]" assemblyInfoVersion; "Nancy.Hosting.Self", "[0.21.1]"]
+          Dependencies = ["Fancy", sprintf "(,%s]" assemblyInfoVersion; "Nancy.Hosting.Self", nancyVersionRange]
           AccessKey = nugetAccessKey
           Publish = hasBuildParam "nugetAccessKey" })
       "fancy.sample.nuspec"

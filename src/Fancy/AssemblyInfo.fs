@@ -8,9 +8,9 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyCompany("Fancy")>]
 [<assembly: AssemblyDescription("Fancy - Nancy in F#")>]
 [<assembly: AssemblyCopyright("Copyright (C) Morgan Persson")>]
-[<assembly: AssemblyVersion("0.2.1.0")>]
-[<assembly: AssemblyFileVersion("0.2.1.0")>]
-[<assembly: AssemblyInformationalVersion("0.2.1.0-alpha")>]
+[<assembly: AssemblyVersion("0.3.0.0")>]
+[<assembly: AssemblyFileVersion("0.3.0.0")>]
+[<assembly: AssemblyInformationalVersion("0.3.0.0-alpha")>]
 
 [<assembly: Guid("3C8F8DE9-4DD7-46F4-BC0D-25BD9FDA6BE2")>]
 ()

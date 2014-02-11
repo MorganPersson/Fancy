@@ -25,7 +25,7 @@ get "/StrongTypeTest/{x}/{y}/{z}" (fun http x y z ->
     http.Response.AsJson s
 )
 
-let browserGet path = 
+let browserGet (path:string) = 
     let browser = Browser(new DefaultNancyBootstrapper())
     let response = browser.Get path
     response.StatusCode, response.Body.AsString()
@@ -40,7 +40,7 @@ let ``should call route with strong typed params`` () =
 let ``should call route with even more strong typed params`` () =
     let statusCode, body = browserGet "/StrongTypeTest/2/Foo/3"
     test <@ statusCode = HttpStatusCode.OK @>
-    test <@ body = "{\"Item1\":4,\"Item2\":\"Foo\",\"Item3\":9}" @>
+    test <@ body = "{\"item1\":4,\"item2\":\"Foo\",\"item3\":9}" @>
 
 [<Fact>]
 let ``should call route for /`` () =
